@@ -1,0 +1,91 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Custom::CloudWatchEventsRule sample template",
+  "Parameters": {
+    "CloudWatchEventsRuleCustomResourceLambdaName": {
+      "Type": "String",
+      "Default": "cfn-cloudwatch-events-rule-0-1-0",
+      "Description": "The name of the CloudWatch Events Rule Lambda you deployed to test this stack."
+    },
+    "CloudWatchEventsRuleName": {
+      "Type": "String",
+      "Default": "sample-rule",
+      "Description": "The name of the Elasticsearch Domain you will launch",
+      "AllowedPattern": "^[\\.\\-_A-Za-z0-9]+$"
+    },
+    "CloudWatchEventsRuleScheduleExpression": {
+      "Type": "String",
+      "Default": "rate(5 minutes)",
+      "Description": "The ScheduleExpression for the CloudWatch Events Rule",
+      "AllowedPattern": "^(rate\\(((1 (hour|minute|day))|(\\d+ (hours|minutes|days)))\\))|(cron\\(\\s*($|#|\\w+\\s*=|(\\?|\\*|(?:[0-5]?\\d)(?:(?:-|\/|\\,)(?:[0-5]?\\d))?(?:,(?:[0-5]?\\d)(?:(?:-|\/|\\,)(?:[0-5]?\\d))?)*)\\s+(\\?|\\*|(?:[0-5]?\\d)(?:(?:-|\/|\\,)(?:[0-5]?\\d))?(?:,(?:[0-5]?\\d)(?:(?:-|\/|\\,)(?:[0-5]?\\d))?)*)\\s+(\\?|\\*|(?:[01]?\\d|2[0-3])(?:(?:-|\/|\\,)(?:[01]?\\d|2[0-3]))?(?:,(?:[01]?\\d|2[0-3])(?:(?:-|\/|\\,)(?:[01]?\\d|2[0-3]))?)*)\\s+(\\?|\\*|(?:0?[1-9]|[12]\\d|3[01])(?:(?:-|\/|\\,)(?:0?[1-9]|[12]\\d|3[01]))?(?:,(?:0?[1-9]|[12]\\d|3[01])(?:(?:-|\/|\\,)(?:0?[1-9]|[12]\\d|3[01]))?)*)\\s+(\\?|\\*|(?:[1-9]|1[012])(?:(?:-|\/|\\,)(?:[1-9]|1[012]))?(?:L|W)?(?:,(?:[1-9]|1[012])(?:(?:-|\/|\\,)(?:[1-9]|1[012]))?(?:L|W)?)*|\\?|\\*|(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(?:(?:-)(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?(?:,(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(?:(?:-)(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?)*)\\s+(\\?|\\*|(?:[0-6])(?:(?:-|\/|\\,|#)(?:[0-6]))?(?:L)?(?:,(?:[0-6])(?:(?:-|\/|\\,|#)(?:[0-6]))?(?:L)?)*|\\?|\\*|(?:MON|TUE|WED|THU|FRI|SAT|SUN)(?:(?:-)(?:MON|TUE|WED|THU|FRI|SAT|SUN))?(?:,(?:MON|TUE|WED|THU|FRI|SAT|SUN)(?:(?:-)(?:MON|TUE|WED|THU|FRI|SAT|SUN))?)*)(|\\s)+(\\?|\\*|(?:|\\d{4})(?:(?:-|\/|\\,)(?:|\\d{4}))?(?:,(?:|\\d{4})(?:(?:-|\/|\\,)(?:|\\d{4}))?)*))\\))$"
+    },
+    "CloudWatchEventsRuleState": {
+      "Type": "String",
+      "Default": "ENABLED",
+      "Description": "Whether or not to enable the CloudWatch Events Rule",
+      "AllowedValues": [
+        "ENABLED",
+        "DISABLED"
+      ]
+    }
+  },
+  "Conditions": {
+  },
+  "Resources": {
+    "MyCloudWatchEventsRule": {
+      "Type": "Custom::CloudWatchEventsRule",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::Join": [
+            ":",
+            [
+              "arn",
+              "aws",
+              "lambda",
+              {
+                "Ref": "AWS::Region"
+              },
+              {
+                "Ref": "AWS::AccountId"
+              },
+              "function",
+              {
+                "Ref": "CloudWatchEventsRuleCustomResourceLambdaName"
+              }
+            ]
+          ]
+        },
+        "Name": {
+          "Ref": "CloudWatchEventsRuleName"
+        },
+        "Description": "An event created with the Example Template from cfn-cloudwatch-events-rule.",
+        "ScheduleExpression": {
+          "Ref": "CloudWatchEventsRuleScheduleExpression"
+          },
+        "State": {
+          "Ref": "CloudWatchEventsRuleState"
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "RuleInConsole": {
+      "Description": "The URL for the CloudWatch Events Rule in the AWS Console",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://console.aws.amazon.com/cloudwatch/home?region=",
+            {
+              "Ref": "AWS::Region"
+            },
+            "#rules:name=",
+            {
+              "Ref": "CloudWatchEventsRuleName"
+            }
+          ]
+        ]
+      }
+    }
+  }
+}
