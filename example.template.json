@@ -10,7 +10,7 @@
     "CloudWatchEventsRuleName": {
       "Type": "String",
       "Default": "sample-rule",
-      "Description": "The name of the Elasticsearch Domain you will launch",
+      "Description": "The name of the CloudWatch Events Rule.",
       "AllowedPattern": "^[\\.\\-_A-Za-z0-9]+$"
     },
     "CloudWatchEventsRuleScheduleExpression": {
